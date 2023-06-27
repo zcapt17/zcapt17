@@ -1,0 +1,403 @@
+import java.util.Scanner;
+
+public class ditambahstruk {
+    static Scanner input = new Scanner(System.in);
+    static String[] tanggalPesan = new String[100];
+    static String[] namaPembeli = new String[100];
+    static String[] nomorMeja = new String[100];
+    static String[] menuPesan = new String[100];
+    static String[] ukuranMinuman = new String[100];
+    static String[] ukuranMakanan = new String[100];
+    static int[] hargaMakanan = new int[100];
+    static int[] hargaMinuman = new int[100];
+    static int jumlahPembeli = 0;
+    static int jumlahMeja = 0;
+
+    Scanner sc = new Scanner(System.in);
+    Scanner sc2 = new Scanner(System.in);
+
+
+    public static void main(String[] args) {
+        System.out.println("=== CAFE BCL ===");
+
+        int pilihan = 0;
+        do {
+            System.out.println("\nPilihan:");
+            System.out.println("1. List Meja Kosong");
+            System.out.println("2. Membuat Pesanan");
+            System.out.println("3. Menambah Pesanan");
+            System.out.println("4. Tampilkan Struk Pembelian");
+            System.out.println("5. Keluar");
+            System.out.print("Memilih: ");
+            pilihan = input.nextInt();
+            input.nextLine(); // Consume the newline character
+
+            switch (pilihan) {
+                case 1:
+                    cariMejaKosong();
+                    break;
+                case 2:
+                    membuatPesanan();
+                    break;
+                case 3:
+                    menambahPesanan();
+                    break;
+                case 4:
+                    tampilkanStruk();
+                    break;
+                case 5:
+                    System.out.println("Terima kasih telah berkunjung ke Cafe BCL!");
+                    break;
+                default:
+                    System.out.println("Pilihan tidak valid!");
+                    break;
+            }
+        } while (pilihan != 5);
+    }
+
+    private static void tampilkanStruk() {
+        System.out.println("\n=== STRUK PEMBELIAN ===");
+        for (int i = 0; i < jumlahPembeli; i++) {
+            System.out.println("=== DATA PEMBELI ===");
+            System.out.println("Tanggal pesan: " + tanggalPesan[i]);
+            System.out.println("Nama pembeli: " + namaPembeli[i]);
+            System.out.println("Meja: " + nomorMeja[i]);
+            System.out.println("Menu: " + menuPesan[i]);
+            System.out.println("Ukuran minuman: " + ukuranMinuman[i]);
+            System.out.println("Ukuran dessert: " + ukuranMakanan[i]);
+            System.out.println("Total harga: " + (hargaMinuman[i] + hargaMakanan[i]) + "k");
+            System.out.println("====================");
+        }
+    }
+
+    static void cariMejaKosong() {
+        System.out.print("Masukkan jumlah meja yang tersedia: ");
+        int jumlahMeja = input.nextInt();
+        input.nextLine();
+
+        boolean[] mejaKosong = new boolean[jumlahMeja];
+
+        for (int i = 0; i < jumlahPembeli; i++) {
+            if (!nomorMeja[i].equals("Take Away")) {
+                int nomor = Integer.parseInt(nomorMeja[i]);
+                if (nomor >= 1 && nomor <= jumlahMeja) {
+                    mejaKosong[nomor - 1] = false;
+                }
+            }
+        }
+
+        System.out.println("\n=== MEJA ===");
+        for (int i = 0; i < jumlahMeja; i++) {
+            if (mejaKosong[i]) {
+                System.out.println("Meja " + (i + 1) + " terisi");
+            } else {
+                System.out.println("Meja " + (i + 1) + " kosong");
+            }
+        }
+    }
+
+    private static void menambahPesanan() {
+        System.out.print("Apakah anda yakin ingin menambah pesanan lain? (ya/tidak): ");
+        String tambahMenu = input.nextLine();
+
+        if (tambahMenu.equalsIgnoreCase("ya")) {
+            System.out.println("Menambah pesanan lain...");
+            memilihMenu();
+        } else if (tambahMenu.equalsIgnoreCase("tidak")) {
+            System.out.println("Keluar dari metode menambahPesanan...");
+        } else {
+            System.out.println("Pilihan tidak valid!");
+            menambahPesanan();
+        }
+    }
+
+    static void membuatPesanan() {
+        System.out.println("\n=== MEMBUAT PESANAN ===");
+
+        System.out.print("Tanggal pesan (dd/mm/yyyy): ");
+        tanggalPesan[jumlahPembeli] = input.next();
+        input.nextLine();
+
+        System.out.print("Nama pembeli: ");
+        namaPembeli[jumlahPembeli] = input.nextLine();
+
+        System.out.print("Dine in/Take away? (1: Dine in, 2: Take away): ");
+        int pilihanDine = input.nextInt();
+        input.nextLine();
+
+        if (pilihanDine == 1) {
+            System.out.print("Nomor meja: ");
+            nomorMeja[jumlahPembeli] = input.nextLine().trim();
+
+            boolean mejaTerisi = false;
+
+
+            if (nomorMeja[jumlahPembeli].matches("\\d+")) {
+                int nomor = Integer.parseInt(nomorMeja[jumlahPembeli]);
+                boolean[] mejaKosong = new boolean[jumlahMeja];
+                if (nomor >= 1 && nomor <= jumlahMeja) {
+                    if (mejaKosong[nomor - 1]) {
+                        nomorMeja[jumlahPembeli] = Integer.toString(nomor);
+                        mejaKosong[nomor - 1] = false;
+                        mejaTerisi = true;
+                    } else {
+                        System.out.println("Maaf, meja tersebut telah ditempati.");
+                        return;
+                    }
+                } else {
+                    System.out.println("Nomor meja tidak valid!");
+                    return;
+                }
+            } else {
+                System.out.println("Nomor meja tidak valid!");
+                return;
+            }
+
+        } else if (pilihanDine == 2) {
+            nomorMeja[jumlahPembeli] = "Take Away";
+        } else {
+            System.out.println("Pilihan tidak valid!");
+            return;
+        }
+        memilihMenu();
+    }
+
+    static void memilihMenu() {
+        System.out.println("\nMenu:");
+        System.out.println("1. Kopi");
+        System.out.println("2. Teh");
+        System.out.println("3. Dessert");
+        System.out.print("Pilihan: ");
+        int pilihanMenu = input.nextInt();
+        input.nextLine(); // Consume the newline character
+
+        switch (pilihanMenu) {
+            case 1:
+                inputKopi();
+                break;
+            case 2:
+                inputTeh();
+                break;
+            case 3:
+                inputDessert();
+                break;
+            default:
+                System.out.println("Pilihan tidak valid!");
+                break;
+        }
+
+        jumlahPembeli++;
+        System.out.println("Data pembeli berhasil disimpan.");
+    }
+
+    static void inputKopi() {
+        System.out.println("\n=== INPUT KOPI ===");
+        System.out.println("Menu:");
+        System.out.println("1. Espresso     ...15k");
+        System.out.println("2. Americano    ...20k");
+        System.out.println("3. Latte        ...25k");
+        System.out.println("4. Cappuccino   ...25k");
+        System.out.println("5. Mocha        ...30k");
+        System.out.println("6. Macchiato    ...25k");
+        System.out.print("Pilihan: ");
+        int pilihanKopi = input.nextInt();
+        input.nextLine(); // Consume the newline character
+
+        switch (pilihanKopi) {
+            case 1:
+                menuPesan[jumlahPembeli] = "Espresso";
+                hargaMinuman[jumlahPembeli] = 15000;
+                hargaMakanan[jumlahPembeli] = 0;
+                break;
+            case 2:
+                menuPesan[jumlahPembeli] = "Americano";
+                hargaMinuman[jumlahPembeli] = 20000;
+                hargaMakanan[jumlahPembeli] = 0;
+                break;
+            case 3:
+                menuPesan[jumlahPembeli] = "Latte";
+                hargaMinuman[jumlahPembeli] = 25000;
+                hargaMakanan[jumlahPembeli] = 0;
+                break;
+            case 4:
+                menuPesan[jumlahPembeli] = "Cappuccino";
+                hargaMinuman[jumlahPembeli] = 25000;
+                hargaMakanan[jumlahPembeli] = 0;
+                break;
+            case 5:
+                menuPesan[jumlahPembeli] = "Mocha";
+                hargaMinuman[jumlahPembeli] = 30000;
+                hargaMakanan[jumlahPembeli] = 0;
+                break;
+            case 6:
+                menuPesan[jumlahPembeli] = "Macchiato";
+                hargaMinuman[jumlahPembeli] = 25000;
+                hargaMakanan[jumlahPembeli] = 0;
+                break;
+            default:
+                System.out.println("Pilihan tidak valid!");
+                break;
+        }
+
+        System.out.print("Ukuran minuman (S/M/L): ");
+        ukuranMinuman[jumlahPembeli] = input.next();
+        input.nextLine(); // Consume the newline character
+
+        if (ukuranMinuman[jumlahPembeli].equalsIgnoreCase("S")) {
+            hargaMinuman[jumlahPembeli] += 0;
+        } else if (ukuranMinuman[jumlahPembeli].equalsIgnoreCase("M")) {
+            hargaMinuman[jumlahPembeli] += 5000;
+        } else if (ukuranMinuman[jumlahPembeli].equalsIgnoreCase("L")) {
+            hargaMinuman[jumlahPembeli] += 10000;
+        } else {
+            System.out.println("Ukuran tidak valid!");
+        }
+    }
+
+    static void inputTeh() {
+        System.out.println("\n=== INPUT TEH ===");
+        System.out.println("Menu:");
+        System.out.println("1. Teh Hitam        ...15k");
+        System.out.println("2. Teh Hijau        ...20k");
+        System.out.println("3. Teh Oolong       ...25k");
+        System.out.println("4. Teh Peppermint   ...20k");
+        System.out.print("Pilihan: ");
+        int pilihanTeh = input.nextInt();
+        input.nextLine(); // Consume the newline character
+
+        switch (pilihanTeh) {
+            case 1:
+                menuPesan[jumlahPembeli] = "Teh Hitam";
+                hargaMinuman[jumlahPembeli] = 15000;
+                hargaMakanan[jumlahPembeli] = 0;
+                break;
+            case 2:
+                menuPesan[jumlahPembeli] = "Teh Hijau";
+                hargaMinuman[jumlahPembeli] = 20000;
+                hargaMakanan[jumlahPembeli] = 0;
+                break;
+            case 3:
+                menuPesan[jumlahPembeli] = "Teh Oolong";
+                hargaMinuman[jumlahPembeli] = 25000;
+                hargaMakanan[jumlahPembeli] = 0;
+                break;
+            case 4:
+                menuPesan[jumlahPembeli] = "Teh Peppermint";
+                hargaMinuman[jumlahPembeli] = 20000;
+                hargaMakanan[jumlahPembeli] = 0;
+                break;
+            default:
+                System.out.println("Pilihan tidak valid!");
+                break;
+        }
+
+        System.out.print("Ukuran minuman (S/M/L): ");
+        ukuranMinuman[jumlahPembeli] = input.next();
+        input.nextLine(); // Consume the newline character
+
+        if (ukuranMinuman[jumlahPembeli].equalsIgnoreCase("S")) {
+            hargaMinuman[jumlahPembeli] += 0;
+        } else if (ukuranMinuman[jumlahPembeli].equalsIgnoreCase("M")) {
+            hargaMinuman[jumlahPembeli] += 5000;
+        } else if (ukuranMinuman[jumlahPembeli].equalsIgnoreCase("L")) {
+            hargaMinuman[jumlahPembeli] += 10000;
+        } else {
+            System.out.println("Ukuran tidak valid!");
+        }
+    }
+
+    static void inputDessert() {
+        System.out.println("\n=== INPUT DESSERT ===");
+        System.out.println("Menu:");
+        System.out.println("1. Es Krim  ...15k");
+        System.out.println("2. Pudding  ...20k");
+        System.out.println("3. Cake     ...25k");
+        System.out.print("Pilihan: ");
+        int pilihanDessert = input.nextInt();
+        input.nextLine(); // Consume the newline character
+
+        switch (pilihanDessert) {
+            case 1:
+                menuPesan[jumlahPembeli] = "Es Krim";
+                hargaMakanan[jumlahPembeli] = 15000;
+                break;
+            case 2:
+                menuPesan[jumlahPembeli] = "Pudding";
+                hargaMakanan[jumlahPembeli] = 20000;
+                break;
+            case 3:
+                menuPesan[jumlahPembeli] = "Cake";
+                hargaMakanan[jumlahPembeli] = 25000;
+                break;
+            default:
+                System.out.println("Pilihan tidak valid!");
+                break;
+        }
+    }
+
+  System.out.println("====================================================");
+        System.out.println("\t\tStruk Belanjaan");
+        System.out.println("====================================================");
+        System.out.println("Masukkan Banyak Struk : ");
+    int banyak = sc.nextInt();
+        System.out.println("----------------------------------------------------");
+    Belanjaan bj = new Belanjaan(banyak);
+    int TotalHarga = 0;
+    int jmh, Harga;
+        for (int i = 0; i < banyak; i++) {
+        System.out.println("Masukkan id struk : ");
+        String id = sc2.nextLine();
+        System.out.println("Masukkan Tanggal Pembelian : ");
+        String tanggal = sc2.nextLine();
+        System.out.println("Masukkan Nama Barang : ");
+        String nb = sc2.nextLine();
+        System.out.println("Masukkan Jumlah Barang Pembeian : ");
+        jmh = sc.nextInt();
+        System.out.println("Masukkan Harga Barang Pembelian : ");
+        Harga = sc.nextInt();
+        TotalHarga = jmh * Harga;
+        StrukBelanjaan sb = new StrukBelanjaan(id, tanggal, nb, jmh, Harga);
+        bj.push(sb);
+        System.out.println("Total Harga total Barang ke-"+(i+1)+" : "+TotalHarga);
+        System.out.println("------------------------------------------------");
+    }
+
+    int ulang = 0;
+        do{
+        System.out.println("");
+        System.out.println("Pilih menu dibawah ini!");
+        System.out.println("1. Tampil Struk");
+        System.out.println("2. Menampilkan struk teratas");
+        System.out.println("3. Mengambil 5 struk untuk ditukar kupon");
+        System.out.println("4. Kosongkan data");
+        System.out.println("0. Keluar");
+        System.out.println("Pilihah menu :");
+        int pilih = sc.nextInt();
+        if(pilih == 1){
+            bj.print();
+            continue;
+        }else if(pilih == 2){
+            bj.peek();
+            bj.print();
+            continue;
+        }else if(pilih == 3){
+            bj.pop();
+            bj.pop();
+            bj.pop();
+            bj.pop();
+            bj.pop();
+            bj.print();
+        }else if(pilih == 4){
+            bj.clear();
+            continue;
+        }else if(pilih == 0){
+            System.out.println("Anda telah keluar dari program");
+            break;
+        }else{
+            System.out.println("Menu yang anda berikan tidak tersedia");
+            System.out.println("");
+        }
+    }while(ulang !=0 || ulang<3);
+}
+}
+        }
